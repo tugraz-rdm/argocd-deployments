@@ -1,0 +1,22 @@
+# ingress: https://github.com/oauth2-proxy/manifests/blob/main/helm/oauth2-proxy/values.yaml#L169
+ingress:
+  enabled: true
+  className: nginx
+  ingressClassName: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  path: /
+  pathType: Prefix
+  hosts:
+    - <path:secrets/invenio/data/oauth2proxy#HOSTNAME>
+  tls: []
+
+extraArgs:
+ - <path:secrets/invenio/data/oauth2proxy#WHITELIST_DOMAIN_ARG>
+ - <path:secrets/invenio/data/oauth2proxy#COOKIE_DOMAIN_ARG>
+ - --provider=keycloak-oidc
+ - <path:secrets/invenio/data/oauth2proxy#CLIENT_ID_ARG>
+ - <path:secrets/invenio/data/oauth2proxy#CLIENT_SECRET_ARG>
+ - <path:secrets/invenio/data/oauth2proxy#ISSUER_URL>
+ - <path:secrets/invenio/data/oauth2proxy#UPSTREAM_ARG>
