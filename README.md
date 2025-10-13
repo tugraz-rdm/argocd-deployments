@@ -9,14 +9,15 @@ argocd-deployments/
 ├── helm/
 │   ├── my-app/
 │   │   └── values.yaml
+│   │   └── README.md
 │   └── another-app/
 │       └── values.yaml
+│   │   └── README.md
 ├── kustomize/
 │   ├── my-app/
-│   │   ├── base/
-│   │   └── overlays/
-│   │       ├── dev/
-│   │       └── prod/
+│   │   ├── kustomization.yaml
+│   │   └── README.md
+│   │   └── ....
 │   └── another-app/
 │       └── ...
 └── README.md
