@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rdm-dashboard
+  labels:
+    app: rdm-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rdm-dashboard
+  template:
+    metadata:
+      labels:
+        app: rdm-dashboard
+    spec:
+      containers:
+        - name: rdm-dashboard
+          image: ghcr.io/tugraz-rdm/rdm:devel
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
