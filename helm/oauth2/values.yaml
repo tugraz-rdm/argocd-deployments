@@ -9,7 +9,7 @@ ingress:
   path: /
   pathType: Prefix
   hosts:
-    - <path:secrets/invenio/data/oauth2proxy#HOSTNAME>
+    - auth.<path:secrets/global/data/instance#DOMAIN>
   tls: []
 
 extraArgs:
