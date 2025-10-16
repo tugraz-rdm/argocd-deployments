@@ -1,0 +1,77 @@
+###############################
+# Deplyoment smtp-client
+###############################
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: smtp-client
+  labels:
+    app: smtp-client
+spec:
+  replicas: 2
+  serviceName: "exim4"
+  selector:
+    matchLabels:
+      app: smtp-client
+  template:
+    metadata:
+      labels:
+        app: smtp-client
+    spec:
+      # 1st grant ownership to user for the spool directory
+      initContainers:
+      - name: take-spool-dir-ownership
+        image: alpine:3
+        command:
+        - chmod
+        - -R
+        - "777"
+        - /var/spool/exim4
+        volumeMounts:
+        - name: mailqueue
+          mountPath: /var/spool/exim4
+
+      containers:
+      - env:
+        - name: EXIM_SMARTHOST
+          value: <path:secrets/invenio/data/smtpclient#SMARTHOST>
+        - name: EXIM_PASSWORD
+          value: <path:secrets/invenio/data/smtpclient#PASSWORD>
+        - name: EXIM_ALLOWED_SENDERS
+          value: <path:secrets/invenio/data/smtpclient#ALLOWED_SENDERS>
+        - name: EXIM_MESSAGE_SIZE_LIMIT
+          value: 255M
+        image: imixs/exim4:latest
+        name: smtp-client
+        ports:
+        - containerPort: 25
+          name: smtp
+        volumeMounts:
+        - name: mailqueue
+          mountPath: /var/spool/exim4
+
+  # for each exim4 instance we use a persistence volume with 2Gi
+  volumeClaimTemplates:
+  - metadata:
+      name: mailqueue
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+###############################
+# Service
+###############################
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: smtp-client
+spec:
+  selector:
+    app: smtp-client
+  ports:
+  - name: smtp
+    port: 25
