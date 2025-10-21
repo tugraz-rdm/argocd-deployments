@@ -1,0 +1,34 @@
+ingress:
+  enabled: true
+  pathType: Prefix
+  hostname: keycloak.<path:secrets/global/data/instance#DOMAIN>
+  ingressClassName: nginx
+  controller: default
+  servicePort: http
+  path: /
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  annotations: {}
+  tls: []
+
+auth:
+  adminUser: <path:secrets/invenio/data/keycloak#ADMIN_USER>
+  adminPassword: <path:secrets/invenio/data/keycloak#ADMIN_PASSWORD>
+
+postgresql:
+  enabled: true
+  image:
+    registry: docker.io
+    repository: bitnami/postgresql
+    tag: latest
+    pullPolicy: IfNotPresent
+  auth:
+    postgresPassword: <path:secrets/invenio/data/keycloak#POSTGRES_PASS>
+    username: <path:secrets/invenio/data/keycloak#PG_USER>
+    password: <path:secrets/invenio/data/keycloak#PG_PASSWORD>
+    database: keycloak
+    existingSecret: ""
+    secretKeys:
+      userPasswordKey: <path:secrets/invenio/data/keycloak#PG_PASSKEY>
+  architecture: standalone
