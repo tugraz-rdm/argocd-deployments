@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: github-release-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: github-release-monitor
+  template:
+    metadata:
+      labels:
+        app: github-release-monitor
+    spec:
+      containers:
+        - name: github-release-monitor
+          image: ghcr.io/iamspido/github-release-monitor:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: github-release-monitor-secrets
+          env:
+            - name: TZ
+              value: "Europe/Vienna"
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+            - name: data
+              mountPath: /app/data
+          ports:
+            - containerPort: 3000
+              name: http
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 512Mi
+      volumes:
+        - name: config
+          configMap:
+            name: github-release-monitor-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+        - name: data
+          persistentVolumeClaim:
+            claimName: github-release-monitor-pvc

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: github-release-monitor
+spec:
+  selector:
+    app: github-release-monitor
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+  type: ClusterIP
