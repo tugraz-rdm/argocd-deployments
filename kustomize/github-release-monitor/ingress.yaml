@@ -5,7 +5,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: releases.<path:secrets/global/data/instance#DOMAIN>
+    - host: releases.<path:secrets/apps/data/global#DOMAIN>
       http:
         paths:
           - path: /

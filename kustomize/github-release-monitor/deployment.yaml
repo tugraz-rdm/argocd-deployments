@@ -12,6 +12,10 @@ spec:
       labels:
         app: github-release-monitor
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: github-release-monitor
           image: ghcr.io/iamspido/github-release-monitor:latest
@@ -19,6 +23,15 @@ spec:
           envFrom:
             - secretRef:
                 name: github-release-monitor-secrets
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1001
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: TZ
               value: "Europe/Vienna"
