@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: github-release-monitor
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: releases.<path:secrets/apps/data/global#DOMAIN>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: github-release-monitor
+                port:
+                  number: 3000
