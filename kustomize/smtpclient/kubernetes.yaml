@@ -19,10 +19,22 @@ spec:
       labels:
         app: smtp-client
     spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       # 1st grant ownership to user for the spool directory
       initContainers:
       - name: take-spool-dir-ownership
-        image: alpine:3
+        image: nginx:alpine
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         command:
         - chmod
         - -R
@@ -35,15 +47,24 @@ spec:
       containers:
       - env:
         - name: EXIM_SMARTHOST
-          value: <path:secrets/invenio/data/smtpclient#SMARTHOST>
+          value: <path:secrets/apps/data/smtpclient#SMARTHOST>
         - name: EXIM_PASSWORD
-          value: <path:secrets/invenio/data/smtpclient#PASSWORD>
+          value: <path:secrets/apps/data/smtpclient#PASSWORD>
         - name: EXIM_ALLOWED_SENDERS
-          value: <path:secrets/invenio/data/smtpclient#ALLOWED_SENDERS>
+          value: <path:secrets/apps/data/smtpclient#ALLOWED_SENDERS>
         - name: EXIM_MESSAGE_SIZE_LIMIT
           value: 255M
         image: imixs/exim4:latest
         name: smtp-client
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+              - ALL
+          seccompProfile:
+            type: RuntimeDefault
         ports:
         - containerPort: 25
           name: smtp
