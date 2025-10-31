@@ -14,9 +14,21 @@ spec:
       labels:
         app: rdm-dashboard
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: rdm-dashboard
-          image: ghcr.io/tugraz-rdm/rdm:devel
+          image: ghcr.io/tugraz-rdm/rdm:main
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           ports:
             - containerPort: 3000

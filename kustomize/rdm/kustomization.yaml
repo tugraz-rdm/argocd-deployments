@@ -8,4 +8,4 @@ resources:
 
 images:
   - name: ghcr.io/tugraz-rdm/rdm
-    newTag: devel # tag, will be updated by ArgoCD
+    newTag: main # tag, will be updated by ArgoCD
