@@ -23,26 +23,27 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
-      # 1st grant ownership to user for the spool directory
-      initContainers:
-      - name: take-spool-dir-ownership
-        image: nginx:alpine
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsNonRoot: true
-          capabilities:
-            drop:
-              - ALL
-          seccompProfile:
-            type: RuntimeDefault
-        command:
-        - chmod
-        - -R
-        - "777"
-        - /var/spool/exim4
-        volumeMounts:
-        - name: mailqueue
-          mountPath: /var/spool/exim4
+      # # 1st grant ownership to user for the spool directory
+      # initContainers:
+      # - name: take-spool-dir-ownership
+      #   image: ghcr.io/tugraz-rdm/argocd-deployments-argocddeployments:update-smtp
+      #   securityContext:
+      #     allowPrivilegeEscalation: false
+      #     runAsNonRoot: true
+      #     runAsUser: 1001
+      #     capabilities:
+      #       drop:
+      #         - ALL
+      #     seccompProfile:
+      #       type: RuntimeDefault
+      #   command:
+      #   - chmod
+      #   - -R
+      #   - "777"
+      #   - /var/spool/exim4
+      #   volumeMounts:
+      #   - name: mailqueue
+      #     mountPath: /var/spool/exim4
 
       containers:
       - env:
@@ -54,7 +55,7 @@ spec:
           value: <path:secrets/apps/data/smtpclient#ALLOWED_SENDERS>
         - name: EXIM_MESSAGE_SIZE_LIMIT
           value: 255M
-        image: imixs/exim4:latest
+        image: ghcr.io/tugraz-rdm/argocd-deployments-exim:update-smtp
         name: smtp-client
         securityContext:
           allowPrivilegeEscalation: false
@@ -66,7 +67,7 @@ spec:
           seccompProfile:
             type: RuntimeDefault
         ports:
-        - containerPort: 25
+        - containerPort: 8025
           name: smtp
         volumeMounts:
         - name: mailqueue
@@ -96,3 +97,4 @@ spec:
   ports:
   - name: smtp
     port: 25
+    targetPort: 8025
